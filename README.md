@@ -1,6 +1,6 @@
 # data_607_project_3
 
-## First steps
+## First steps, assuming your working dir is data_607_project_3
 Get python packages installed with ```conda install --file requirements.txt``` or ```pip install -r requirements.txt```
 
 Create sensitive.py with  ```cp example_sensitive.py sensitive.py``` and fill in ```"<fields>"```
