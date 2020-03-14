@@ -1,4 +1,5 @@
 sensitive.py
+db_sensitive.py
 *.pyc
 *.csv
 __pycache__
