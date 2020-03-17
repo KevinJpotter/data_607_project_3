@@ -1,0 +1,95 @@
+---
+title: "Untitled"
+author: "Vincent Miceli"
+date: "3/17/2020"
+output: html_document
+---
+
+```{r}
+pacman::p_load(RPostgreSQL, dplyr, dbplyr, tidyr)
+
+# <ourgroupname> is no capitals and no spaces
+host="soundsgood.crg53husyk2z.us-east-2.rds.amazonaws.com"
+port="5432"
+database="soundsgood"
+username="soundsgood"
+password="soundsgood"
+
+my_db <-  src_postgres(database, host=host, port=port, user=username, password=password)
+```
+
+```{r}
+con <- DBI::dbConnect(RPostgreSQL::PostgreSQL(),
+  host = host,
+  user = username,
+  password = password
+)
+
+comms <- data.frame(tbl(con, 'comms'))
+posts <- data.frame(tbl(con, 'posts'))
+```
+
+```{r}
+comms %<>%
+  arrange(index)
+head(comms, 10)
+```
+
+Commms is a dataframe containing comments in response to different reddit posts.  We can Identify which comments belong to which posts with the index and sub_post_id columns.
+
+```{r}
+head(posts, 10)
+```
+
+Posts is a dataframe of the original reddit posts, containing the title of the post, the body of the post, and the number of comments on the post.
+
+```{r}
+p1  = posts %>%
+  filter(n_comments == 1) %>%
+  arrange(index)
+
+p2_plus = posts %>%
+  filter(n_comments > 1) %>%
+  arrange(index)
+```
+
+In order to find which comments are connected to which posts, we can merge the two dataframes.  In order to do this, they need to be of the same length.  Using the n_comments column, we can multiply each post by the number of comments on them so that the dataframes will have the same length.  The following for loop does this:
+
+```{r}
+for (row in 1:length(p2_plus$n_comments)){
+  for (n in 1:p2_plus[row, 7]){
+    p1 = rbind(p1, p2_plus[row,])
+  }
+}
+```
+
+```{r}
+p1 %<>%
+  arrange(index)
+head(p1, 10)
+```
+
+Before we can merge, we need the index columns to match.  The indices are not matching anymore because we multiplied the rows.
+
+```{r}
+p1 %<>%
+  mutate(index = comms$index)
+head(p1,10)
+```
+
+Now we can merge the dataframes by index:
+
+```{r}
+merged <- merge(p1, comms, by = 'index')
+head(merged, 10)
+```
+
+```{r}
+merged %<>%
+  select(-c(index, n_comments, sub_post_id.y, n_comments, likes, category)) %>%
+  rename(comments = text, post_id = sub_post_id.x) %>%
+  mutate(post_id = post_id + 1)
+head(merged, 10)
+```
+We now remove uneccessary columns.  The merged data set contains the title of the post, the body, the sub-reddit it belongs to, the post id, and all of the corresponding comments.
+
