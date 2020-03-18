@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r}
-pacman::p_load(RPostgreSQL, dplyr, dbplyr, tidyr, magrittr, stringr, udpipe, tm, qdap, rJava, lattice)
+pacman::p_load(RPostgreSQL, dplyr, dbplyr, tidyr, magrittr, stringr, udpipe, tm, lattice)
 ```
 
 ```{r}
@@ -99,10 +99,6 @@ We now remove uneccessary columns.  The merged data set contains the title of th
 stopwords_regex = paste(stopwords('en'), collapse = '\\b|\\b')
 stopwords_regex = paste0('\\b', stopwords_regex, '\\b')
 c = str_replace_all(reddit$comments, stopwords_regex, '')
-```
-
-```{r}
-freq_terms(c, 100)
 ```
 
 ```{r}
