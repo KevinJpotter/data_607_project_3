@@ -6,8 +6,10 @@ output: html_document
 ---
 
 ```{r}
-pacman::p_load(RPostgreSQL, dplyr, dbplyr, tidyr)
+pacman::p_load(RPostgreSQL, dplyr, dbplyr, tidyr, magrittr, stringr, udpipe)
+```
 
+```{r}
 # <ourgroupname> is no capitals and no spaces
 host="soundsgood.crg53husyk2z.us-east-2.rds.amazonaws.com"
 port="5432"
@@ -77,19 +79,43 @@ p1 %<>%
 head(p1,10)
 ```
 
-Now we can merge the dataframes by index:
+The posts are now multiplied by the number of comments on them, so now we can merge the dataframes by index:
 
 ```{r}
-merged <- merge(p1, comms, by = 'index')
-head(merged, 10)
+reddit <- merge(p1, comms, by = 'index')
+head(reddit, 10)
 ```
 
 ```{r}
-merged %<>%
+reddit %<>%
   select(-c(index, n_comments, sub_post_id.y, n_comments, likes, category)) %>%
   rename(comments = text, post_id = sub_post_id.x) %>%
   mutate(post_id = post_id + 1)
-head(merged, 10)
+head(reddit, 10)
 ```
 We now remove uneccessary columns.  The merged data set contains the title of the post, the body, the sub-reddit it belongs to, the post id, and all of the corresponding comments.
 
+```{r}
+stopwords_regex = paste(stopwords('en'), collapse = '\\b|\\b')
+stopwords_regex = paste0('\\b', stopwords_regex, '\\b')
+c = str_replace_all(reddit$comments, stopwords_regex, '')
+```
+
+```{r}
+freq_terms(c, 100)
+```
+
+```{r}
+model <- udpipe_download_model(language = "english")
+udmodel_english <- udpipe_load_model(model)
+s <- udpipe_annotate(udmodel_english, c)
+x <- data.frame(s)
+```
+
+```{r}
+stats <- subset(x, upos %in% c("NOUN")) 
+stats <- txt_freq(stats$token)
+stats$key <- factor(stats$key, levels = rev(stats$key))
+barchart(key ~ freq, data = head(stats, 20), col = "cadetblue", 
+         main = "Most occurring nouns", xlab = "Freq")
+```
