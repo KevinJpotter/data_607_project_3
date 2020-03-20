@@ -149,3 +149,10 @@ stats <- subset(x, upos %in% c("NOUN"))
 nouns <- stats$token
 nouns
 ```
+
+##maybe use something like this to remove words, or search for specific words.. not working too well yet
+```{r}
+x <- data.frame(s)
+x %<>%
+  filter(!grepl("page|resume|role|analyst|science|thing|previous|luck|scientist|book|reply|job|kind|media|source|mate|i|clearance|citzenship|bro|one|company|old|offers|jobs|entry|level|sorry", lemma))
+```
