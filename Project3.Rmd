@@ -143,3 +143,9 @@ stats$key <- factor(stats$keyword, levels = rev(stats$keyword))
 barchart(key ~ freq, data = head(stats, 20), col = "magenta", 
          main = "Keywords - simple noun phrases", xlab = "Frequency")
 ```
+
+```{r}
+stats <- subset(x, upos %in% c("NOUN"))
+nouns <- stats$token
+nouns
+```
