@@ -1,12 +1,12 @@
 ---
 title: "Project 3"
-authors: ""
+author: ""
 date: "3/17/2020"
 output: html_document
 ---
 
 ```{r}
-pacman::p_load(RPostgreSQL, dplyr, dbplyr, tidyr, magrittr, stringr, udpipe, tm, lattice)
+pacman::p_load(RPostgreSQL, dplyr, dbplyr, tidyr, magrittr, stringr, udpipe, tm, lattice, tidytext)
 ```
 
 ```{r}
@@ -93,20 +93,29 @@ reddit %<>%
   mutate(post_id = post_id + 1)
 head(reddit, 10)
 ```
-We now remove uneccessary columns.  The merged data set contains the title of the post, the body, the sub-reddit it belongs to, the post id, and all of the corresponding comments.
+We now removed uneccessary columns.  The merged data set contains the title of the post, the body, the sub-reddit it belongs to, the post id, and all of the corresponding comments.
 
 ```{r}
-stopwords_regex = paste(stopwords('en'), collapse = '\\b|\\b')
-stopwords_regex = paste0('\\b', stopwords_regex, '\\b')
-c = str_replace_all(reddit$comments, stopwords_regex, '')
+ndocs <- length(reddit$comments)
+minDocFreq <- ndocs * 0.01
+maxDocFreq <- ndocs * 0.8
+
+c <- Corpus(VectorSource(reddit$comments))
+dtm <- DocumentTermMatrix(c, control = list(bounds = list(global = c(minDocFreq, maxDocFreq))))
+
+terms <- tidy(dtm)
 ```
+
+Make a document term matrix from the comments in the dataset.  The parameters minDocFreq and maxDocFreq are use to filter out overly common words, so we can identify keywords we are looking for.
 
 ```{r}
 model <- udpipe_download_model(language = "english")
 udmodel_english <- udpipe_load_model(model)
-s <- udpipe_annotate(udmodel_english, c)
+s <- udpipe_annotate(udmodel_english, terms$term)
 x <- data.frame(s)
 ```
+
+Created a POS tagger using udpipe, so that we can identify different parts of speech and analyze the most frequent words.
 
 ```{r}
 stats <- subset(x, upos %in% c("NOUN")) 
@@ -144,15 +153,10 @@ barchart(key ~ freq, data = head(stats, 20), col = "magenta",
          main = "Keywords - simple noun phrases", xlab = "Frequency")
 ```
 
-```{r}
-stats <- subset(x, upos %in% c("NOUN"))
-nouns <- stats$token
-nouns
-```
-
-##maybe use something like this to remove words, or search for specific words.. not working too well yet
-```{r}
+#```{r}
 x <- data.frame(s)
 x %<>%
   filter(!grepl("page|resume|role|analyst|science|thing|previous|luck|scientist|book|reply|job|kind|media|source|mate|i|clearance|citzenship|bro|one|company|old|offers|jobs|entry|level|sorry", lemma))
-```
+
+x$lemma
+#```
