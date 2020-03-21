@@ -98,7 +98,7 @@ We now removed uneccessary columns.  The merged data set contains the title of t
 ```{r}
 ndocs <- length(reddit$comments)
 minDocFreq <- ndocs * 0.01
-maxDocFreq <- ndocs * 0.8
+maxDocFreq <- ndocs * 0.9
 
 c <- Corpus(VectorSource(reddit$comments))
 dtm <- DocumentTermMatrix(c, control = list(bounds = list(global = c(minDocFreq, maxDocFreq))))
@@ -126,14 +126,6 @@ barchart(key ~ freq, data = head(stats, 20), col = "cadetblue",
 ```
 
 ```{r}
-stats <- subset(x, upos %in% c("VERB")) 
-stats <- txt_freq(stats$token)
-stats$key <- factor(stats$key, levels = rev(stats$key))
-barchart(key ~ freq, data = head(stats, 20), col = "gold", 
-         main = "Most occurring Verbs", xlab = "Freq")
-```
-
-```{r}
 stats <- keywords_rake(x = x, term = "lemma", group = "doc_id", 
                        relevant = x$upos %in% c("NOUN", "ADJ"))
 stats$key <- factor(stats$keyword, levels = rev(stats$keyword))
@@ -147,7 +139,7 @@ x$phrase_tag <- as_phrasemachine(x$upos, type = "upos")
 stats <- keywords_phrases(x = x$phrase_tag, term = tolower(x$token), 
                           pattern = "(A|N)*N(P+D*(A|N)*N)*", 
                           is_regex = TRUE, detailed = FALSE)
-stats <- subset(stats, ngram > 1 & freq > 1)
+stats <- subset(stats, ngram > 1 & freq > 4)
 stats$key <- factor(stats$keyword, levels = rev(stats$keyword))
 barchart(key ~ freq, data = head(stats, 20), col = "magenta", 
          main = "Keywords - simple noun phrases", xlab = "Frequency")
