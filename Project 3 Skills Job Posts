@@ -1,0 +1,28 @@
+```{r}
+if (!require('XML')) install.packages('XML')
+library(XML)
+```
+
+
+```{r}
+# Reading XML file from github
+con <-'https://stackoverflow.com/jobs/feed?dr=DataScientist&j=permanent%2ccontract'
+job_raw<-readLines(con, warn = FALSE)
+
+require(XML)
+Fun1 <- function(xdata){
+  dum <- xmlParse(xdata)
+  xDf<- xmlToDataFrame(nodes = getNodeSet(dum, "//*/category"), stringsAsFactors = FALSE)
+  xDf
+}
+
+x<-Fun1(job_raw)
+y<-sort(table(x), decreasing=T)
+y<-data.frame(y)
+y<-head(y,15)
+# Simple Bar Plot
+barplot(y$Freq, main=" 15 Most Frequent Skills Required",
+   xlab="Skills", names.arg=y$x, las=2)
+
+
+```
