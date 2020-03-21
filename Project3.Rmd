@@ -57,7 +57,7 @@ In order to find which comments are connected to which posts, we can merge the t
 
 ```{r}
 for (row in 1:length(p2_plus$n_comments)){
-  for (n in 1:p2_plus[row, 7]){
+  for (n in 1:p2_plus[row, 8]){
     p1 = rbind(p1, p2_plus[row,])
   }
 }
