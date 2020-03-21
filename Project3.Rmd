@@ -1,3 +1,4 @@
+  
 ---
 title: "Project 3"
 author: ""
@@ -16,7 +17,6 @@ port="5432"
 database="soundsgood"
 username="soundsgood"
 password="soundsgood"
-
 my_db <-  src_postgres(database, host=host, port=port, user=username, password=password)
 ```
 
@@ -26,7 +26,6 @@ con <- DBI::dbConnect(RPostgreSQL::PostgreSQL(),
   user = username,
   password = password
 )
-
 comms <- data.frame(tbl(con, 'comms'))
 posts <- data.frame(tbl(con, 'posts'))
 ```
@@ -49,7 +48,6 @@ Posts is a dataframe of the original reddit posts, containing the title of the p
 p1  = posts %>%
   filter(n_comments == 1) %>%
   arrange(index)
-
 p2_plus = posts %>%
   filter(n_comments > 1) %>%
   arrange(index)
@@ -99,10 +97,8 @@ We now removed uneccessary columns.  The merged data set contains the title of t
 ndocs <- length(reddit$comments)
 minDocFreq <- ndocs * 0.01
 maxDocFreq <- ndocs * 0.9
-
 c <- Corpus(VectorSource(reddit$comments))
 dtm <- DocumentTermMatrix(c, control = list(bounds = list(global = c(minDocFreq, maxDocFreq))))
-
 terms <- tidy(dtm)
 ```
 
@@ -135,6 +131,10 @@ barchart(key ~ rake, data = head(subset(stats, freq > 2), 20), col = "red",
 ```
 
 ```{r}
+#remove terms that did not make sense 
+x %<>%
+  filter(!grepl("â|page|#x200B|rules|thanks|thing|years|reddit|year|sure", sentence))
+
 x$phrase_tag <- as_phrasemachine(x$upos, type = "upos")
 stats <- keywords_phrases(x = x$phrase_tag, term = tolower(x$token), 
                           pattern = "(A|N)*N(P+D*(A|N)*N)*", 
@@ -144,11 +144,3 @@ stats$key <- factor(stats$keyword, levels = rev(stats$keyword))
 barchart(key ~ freq, data = head(stats, 20), col = "magenta", 
          main = "Keywords - simple noun phrases", xlab = "Frequency")
 ```
-
-#```{r}
-x <- data.frame(s)
-x %<>%
-  filter(!grepl("page|resume|role|analyst|science|thing|previous|luck|scientist|book|reply|job|kind|media|source|mate|i|clearance|citzenship|bro|one|company|old|offers|jobs|entry|level|sorry", lemma))
-
-x$lemma
-#```
