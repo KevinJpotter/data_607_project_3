@@ -48,7 +48,7 @@ To stored the data we used a free Amazon RDS PostgresSQL account. We created to 
 
 |Reddit Comms Data|Data Type Description|
 |:------|:----------|
-|Sub Post ID| |
+|Sub Post ID|Id of the post the comment is linked to|
 |Text| Text from each comment|
 |Likes| How many likes the comment has|
 
