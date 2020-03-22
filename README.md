@@ -1,5 +1,6 @@
 # data_607_project_3
 
+
 ## Data Science Skills Analysis Overview
 
 This repo is for the purpose of using basic natural language processing to to find the most in demand data science skills by collecting information from data science reddit and stack overflow forums. Using a combination of packages fro web scraping and text analysis we collected, organized, and analyzed unstructured text data with the goal of extracting the most relevant data science skills.
@@ -33,13 +34,23 @@ To stored the data we used a free Amazon RDS PostgresSQL account. We created to 
 |Skills|list of all the skills across the job postings|
 |Freq| number of times the skill appears in the job posted|
 
-|Reddit Data|Data Type Description|
+
+|Reddit Posts Data|Data Type Description|
 |:------|:----------|
-|Title| The title of the post|
-|Body| text from original post|
-|Sub| which subreddit is came from|
-|Post ID| unique identifier we for each post|
-|comment| text from all comments related to the post|
+|Category| The borad category of the subreddit|
+|Title| Title of the post|
+|Body| Text from the post|
+|Sub| Which subreddit is came from|
+|Sub Post ID| Unique Identifier of the post|
+|N Comments| Number of comments of the post has|
+
+
+
+|Reddit Comms Data|Data Type Description|
+|:------|:----------|
+|Sub Post ID| |
+|Text| Text from each comment|
+|Likes| How many likes the comment has|
 
 
 
@@ -51,13 +62,14 @@ Combine all the data from the comments into one cell and add it to each reddit p
 
 **Conclusion**
 
+The analysis of the Reddit posts was for the most part successful.  We were able to identify many keywords related to Data Science, but not all of them would be considered skills.  The data we gathered from the XML files is more directly related to skills, as they were taken directly from job listings.  In conclusion, both data sources were useful but it is more difficult to single out skills alone from a large database of text with many different Data Science related topics.
+
 ![](keywords.png)
 
 ![](noun_phrases.png)
 
 ![](xml_data.png)
 
-The analysis of the Reddit posts was for the most part successful.  We were able to identify many keywords related to Data Science, but not all of them would be considered skills.  The data we gathered from the XML files is more directly related to skills, as they were taken directly from job listings.  In conclusion, both data sources were useful but it is more difficult to single out skills alone from a large database of text with many different Data Science related topics.
 
 ## Contributors
 
@@ -65,3 +77,4 @@ Kevin Potter
 Justin Hsi  
 Vincent Miceli  
 Bruno de Melo
+
