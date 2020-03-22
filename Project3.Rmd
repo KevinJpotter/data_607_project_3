@@ -188,3 +188,6 @@ ggplot(skills_db, aes(x = reorder(skills, Freq), y = Freq))+ geom_bar(stat = 'id
 
 dbDisconnect(conc)
 ```
+#Conclusion 
+
+The analysis of the Reddit comments was for the most part successful.  We were able to identify many keywords related to Data Science, but not all of them would be considered skills.  The data we gathered from the XML files is more directly related to skills.  In conclusion, both data sources were useful but it is more difficult to single out skills alone from a large database of text.
