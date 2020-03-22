@@ -121,18 +121,12 @@ barchart(key ~ freq, data = head(stats, 20), col = "cadetblue",
 ```
 
 ```{r}
-stats <- subset(x, upos %in% c("NOUN")) 
-stats <- txt_freq(stats$token)
-stats$key <- factor(stats$key, levels = rev(stats$key))
-barchart(key ~ freq, data = head(stats, 20), col = "cadetblue", 
-         main = "Most occurring nouns", xlab = "Freq")
-```
-
-```{r}
 stats <- keywords_rake(x = x, term = "lemma", group = "doc_id", 
                        relevant = x$upos %in% c("NOUN", "ADJ"))
+stats %<>%
+  filter(!grepl('Â', keyword)) 
 stats$key <- factor(stats$keyword, levels = rev(stats$keyword))
-barchart(key ~ rake, data = head(subset(stats, freq > 4), 20), col = "red", 
+barchart(key ~ rake, data = head(subset(stats, freq > 3), 20), col = "red", 
          main = "Keywords identified by RAKE", 
          xlab = "Rake")
 ```
