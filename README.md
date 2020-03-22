@@ -64,11 +64,11 @@ Combine all the data from the comments into one cell and add it to each reddit p
 
 The analysis of the Reddit posts was for the most part successful.  We were able to identify many keywords related to Data Science, but not all of them would be considered skills.  The data we gathered from the XML files is more directly related to skills, as they were taken directly from job listings.  In conclusion, both data sources were useful but it is more difficult to single out skills alone from a large database of text with many different Data Science related topics.
 
-![](keywords.png)
+![](https://github.com/KevinJpotter/data_607_project_3/blob/master/images/keywords.png)
 
-![](noun_phrases.png)
+![](https://github.com/KevinJpotter/data_607_project_3/blob/master/images/noun_phrases.png)
 
-![](xml_data.png)
+![](https://github.com/KevinJpotter/data_607_project_3/blob/master/images/xml_data.png)
 
 
 ## Contributors
