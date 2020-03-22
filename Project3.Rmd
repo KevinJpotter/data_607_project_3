@@ -9,6 +9,7 @@ output: html_document
 
 ```{r}
 pacman::p_load(RPostgreSQL, dplyr, dbplyr, tidyr, magrittr, stringr, udpipe, tm, lattice, tidytext)
+library(ggplot2)
 ```
 
 ```{r}
@@ -189,8 +190,9 @@ skills_db<-data.frame(skills_db)
 # summarizing 20 most frequent skills
 skills_db<-head(skills_db,20)
 #Bar Chart
-barchart(skills_db$skills ~ skills_db$Freq, xlab = "Frequency", ylab = "Skills", main=" 15 Most Frequent Skills Required")
-skills_db$
+# barchart(skills_db$skills ~ skills_db$Freq, xlab = "Frequency", ylab = "Skills", main=" 15 Most Frequent Skills Required")
+#skills_db$
+ggplot(skills_db, aes(x = reorder(skills, Freq), y = Freq))+ geom_bar(stat = 'identity', color="blue", fill = 'white') + coord_flip() + labs(y="Frequency Mentioned", x="Skill")
 
 dbDisconnect(conc)
 ```
