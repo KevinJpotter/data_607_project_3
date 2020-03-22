@@ -1,7 +1,8 @@
   
+  
 ---
 title: "Project 3"
-author: ""
+authors: "Vincent Miceli, Justin Hsi, Kevin Potter, Bruno de Melo"
 date: "3/17/2020"
 output: html_document
 ---
@@ -57,7 +58,7 @@ In order to find which comments are connected to which posts, we can merge the t
 
 ```{r}
 for (row in 1:length(p2_plus$n_comments)){
-  for (n in 1:p2_plus[row, 8]){
+  for (n in 1:p2_plus[row, 7]){
     p1 = rbind(p1, p2_plus[row,])
   }
 }
@@ -94,20 +95,17 @@ head(reddit, 10)
 We now removed uneccessary columns.  The merged data set contains the title of the post, the body, the sub-reddit it belongs to, the post id, and all of the corresponding comments.
 
 ```{r}
-ndocs <- length(reddit$comments)
-minDocFreq <- ndocs * 0.01
-maxDocFreq <- ndocs * 0.9
-c <- Corpus(VectorSource(reddit$comments))
-dtm <- DocumentTermMatrix(c, control = list(bounds = list(global = c(minDocFreq, maxDocFreq))))
-terms <- tidy(dtm)
+stopwords_regex = paste(stopwords('en'), collapse = '\\b|\\b')
+stopwords_regex = paste0('\\b', stopwords_regex, '\\b')
+reddit$comments = stringr::str_replace_all(reddit$comments, stopwords_regex, '')
 ```
-
-Make a document term matrix from the comments in the dataset.  The parameters minDocFreq and maxDocFreq are use to filter out overly common words, so we can identify keywords we are looking for.
+Remove stopwords to help identify the true keywords in our dataset.
 
 ```{r}
 model <- udpipe_download_model(language = "english")
 udmodel_english <- udpipe_load_model(model)
-s <- udpipe_annotate(udmodel_english, terms$term)
+
+s <- udpipe_annotate(udmodel_english, reddit$comments)
 x <- data.frame(s)
 ```
 
@@ -130,10 +128,12 @@ barchart(key ~ rake, data = head(subset(stats, freq > 2), 20), col = "red",
          xlab = "Rake")
 ```
 
-```{r}
+#```{r} -> use this to clean up the chart
 #remove terms that did not make sense 
 x %<>%
   filter(!grepl("â|page|#x200B|rules|thanks|thing|years|reddit|year|sure", sentence))
+
+head(x)
 
 x$phrase_tag <- as_phrasemachine(x$upos, type = "upos")
 stats <- keywords_phrases(x = x$phrase_tag, term = tolower(x$token), 
@@ -143,4 +143,54 @@ stats <- subset(stats, ngram > 1 & freq > 4)
 stats$key <- factor(stats$keyword, levels = rev(stats$keyword))
 barchart(key ~ freq, data = head(stats, 20), col = "magenta", 
          main = "Keywords - simple noun phrases", xlab = "Frequency")
+#```
+
+##XML Data
+
+```{r}
+if (!require('XML')) install.packages('XML')
+library(XML)
+```
+
+```{r}
+# Reading XML file from the web
+con <-'https://stackoverflow.com/jobs/feed?dr=DataScientist&j=permanent%2ccontract'
+job_raw<-readLines(con, warn = FALSE)
+#function that scraps node category which contains job skills
+require(XML)
+Fun1 <- function(xdata){
+  dum <- xmlParse(xdata)
+  xDf<- xmlToDataFrame(nodes = getNodeSet(dum, "//*/category"), stringsAsFactors = FALSE)
+  xDf
+}
+# calling function and converting data frame
+skills<-Fun1(job_raw)
+skills_tbl<-sort(table(skills), decreasing=T)
+skills_tbl<-data.frame(skills_tbl)
+# writing table to database for comparison
+# writing function is commented out as table has already been created, results are showed
+# <ourgroupname> is no capitals and no spaces
+host="soundsgood.crg53husyk2z.us-east-2.rds.amazonaws.com"
+port="5432"
+database="soundsgood"
+username="soundsgood"
+password="soundsgood"
+drv <- dbDriver("PostgreSQL")
+conc <- DBI::dbConnect(drv, 
+  host = host,
+  user = username,
+  password = password)
+# write function is commented out
+#######    dbWriteTable(conc,"skills_xml",skills_tbl)
+# results
+(skills_db <- tbl(conc, "skills_xml"))
+# converting to a data frame
+skills_db<-data.frame(skills_db)
+# summarizing 20 most frequent skills
+skills_db<-head(skills_db,20)
+#Bar Chart
+barchart(skills_db$skills ~ skills_db$Freq, xlab = "Frequency", ylab = "Skills", main=" 15 Most Frequent Skills Required")
+skills_db$
+
+dbDisconnect(conc)
 ```
