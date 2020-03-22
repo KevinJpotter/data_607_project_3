@@ -50,14 +50,13 @@ To stored the data we used a free Amazon RDS PostgresSQL account. We created to 
 Combine all the data from the comments into one cell and add it to each reddit post as it's own variable. We removed uneccessary columns. The merged data set contains the title of the post, the body, the sub-reddit it belongs to, the post id, and all of the corresponding comments.Make a document term matrix from the comments in the dataset. The parameters minDocFreq and maxDocFreq are use to filter out overly common words, so we can identify keywords we are looking for. Created a POS tagger using udpipe, so that we can identify different parts of speech and analyze the most frequent words.
 
 **Conclusion**
-
-The analysis of the Reddit posts was for the most part successful.  We were able to identify many keywords related to Data Science, but not all of them would be considered skills.  The data we gathered from the XML files is more directly related to skills, as they were taken directly from job listings.  In conclusion, both data sources were useful but it is more difficult to single out skills alone from a large database of text with many different Data Science related topics.
-
 ![](keywords.png)
 
 ![](noun_phrases.png)
 
 ![](xml_data.png)
+
+The analysis of the Reddit posts was for the most part successful.  We were able to identify many keywords related to Data Science, but not all of them would be considered skills.  The data we gathered from the XML files is more directly related to skills, as they were taken directly from job listings.  In conclusion, both data sources were useful but it is more difficult to single out skills alone from a large database of text with many different Data Science related topics.
 
 ## Contributors
 
