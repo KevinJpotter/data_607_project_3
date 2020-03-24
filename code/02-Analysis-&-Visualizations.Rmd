@@ -1,5 +1,3 @@
-  
-  
 ---
 title: "Project 3"
 authors: "Vincent Miceli, Justin Hsi, Kevin Potter, Bruno de Melo"
@@ -8,8 +6,7 @@ output: html_document
 ---
 
 ```{r}
-pacman::p_load(RPostgreSQL, dplyr, dbplyr, tidyr, magrittr, stringr, udpipe, tm, lattice, tidytext)
-library(ggplot2)
+pacman::p_load(RPostgreSQL, dplyr, dbplyr, tidyr, magrittr, stringr, udpipe, tm, lattice, tidytext, ggplot2)
 ```
 
 ```{r}
@@ -35,13 +32,13 @@ posts <- data.frame(tbl(con, 'posts'))
 ```{r}
 comms %<>%
   arrange(index)
-head(comms, 10)
+head(comms)
 ```
 
 Commms is a dataframe containing comments in response to different reddit posts.  We can Identify which comments belong to which posts with the index and sub_post_id columns.
 
 ```{r}
-head(posts, 10)
+head(posts)
 ```
 
 Posts is a dataframe of the original reddit posts, containing the title of the post, the body of the post, and the number of comments on the post.
@@ -105,7 +102,6 @@ Remove stopwords to help identify the true keywords in our dataset.
 ```{r}
 model <- udpipe_download_model(language = "english")
 udmodel_english <- udpipe_load_model(model)
-
 s <- udpipe_annotate(udmodel_english, reddit$comments)
 x <- data.frame(s)
 ```
@@ -126,13 +122,15 @@ stats <- keywords_rake(x = x, term = "lemma", group = "doc_id",
 stats %<>%
   filter(!grepl('Â', keyword)) 
 stats$key <- factor(stats$keyword, levels = rev(stats$keyword))
-barchart(key ~ rake, data = head(subset(stats, freq > 3), 20), col = "red", 
+barchart(key ~ rake, data = head(subset(stats, freq > 2), 20), col = "red", 
          main = "Keywords identified by RAKE", 
          xlab = "Rake")
 ```
 
 ```{r}
-stats <- subset(stats, ngram > 1 & freq > 4)
+stats <- subset(stats, ngram > 1 & freq > 6)
+stats %<>%
+  filter(!grepl('â', keyword))
 stats$key <- factor(stats$keyword, levels = rev(stats$keyword))
 barchart(key ~ freq, data = head(stats, 20), col = "magenta", 
          main = "Keywords - simple noun phrases", xlab = "Frequency")
@@ -185,9 +183,9 @@ skills_db<-head(skills_db,20)
 # barchart(skills_db$skills ~ skills_db$Freq, xlab = "Frequency", ylab = "Skills", main=" 15 Most Frequent Skills Required")
 #skills_db$
 ggplot(skills_db, aes(x = reorder(skills, Freq), y = Freq))+ geom_bar(stat = 'identity', color="blue", fill = 'white') + coord_flip() + labs(y="Frequency Mentioned", x="Skill")
-
 dbDisconnect(conc)
 ```
+
 #Conclusion 
 
 The analysis of the Reddit comments was for the most part successful.  We were able to identify many keywords related to Data Science, but not all of them would be considered skills.  The data we gathered from the XML files is more directly related to skills.  In conclusion, both data sources were useful but it is more difficult to single out skills alone from a large database of text.
