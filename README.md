@@ -68,7 +68,7 @@ The analysis of the Reddit posts was for the most part successful.  We were able
 
 ![](https://github.com/KevinJpotter/data_607_project_3/blob/master/images/noun_phrases.png)
 
-![](https://github.com/KevinJpotter/data_607_project_3/blob/master/images/xml_data.png)
+![](https://github.com/KevinJpotter/data_607_project_3/blob/master/images/xmldata.png)
 
 
 ## Contributors
